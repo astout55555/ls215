@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Document for testing JS code</title>
+  </head>
+  <body>
+    <script src="https://dbdwvr6p7sskw.cloudfront.net/210/files/email_data_v2.js"></script>
+    <script>
+      function transpose(array) {
+        return array[0].map((col, columnIdx) => {
+          return array.map(row => row[columnIdx]);
+        });
+      }
+
+      function cleanupDate(dateData) {
+        let startIndex = ('Date: ').length
+        return dateData.trim().slice(startIndex);
+      }
+
+      function dateValueToString(dateValue) {
+        let dateObject = new Date(dateValue);
+        return dateObject.toDateString();
+      }
+
+      function mailCount(emailData) {
+        let emails = emailData.split('##||##');
+        let emailsInParts = emails.map(email => email.split('#/#'));
+
+        [senders, subjects, dates, recipients, bodies] = transpose(emailsInParts);
+
+        let sortedDateValues = dates.map(cleanupDate)
+          .map(Date.parse)
+          .sort();
+
+        let sortedDateStrings = sortedDateValues.map(dateValueToString);
+
+        let earliestDate = sortedDateStrings[0];
+        let latestDate = sortedDateStrings[sortedDateStrings.length - 1];
+
+        console.log(`Count of Email: ${emails.length}\n` +
+          `Date Range: ${earliestDate} - ${latestDate}`
+        );
+      }
+
+      mailCount(emailData);
+
+      // console output
+
+      // Count of Email: 5
+      // Date Range: Sat Jun 25 2016 - Thu Aug 11 2016
+    </script>
+  </body>
+</html>
